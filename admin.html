@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KVX Reps — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --bg-soft: #ffffff;
+      --bg-muted: #ebedf0;
+      --panel: rgba(255,255,255,0.82);
+      --panel-strong: rgba(255,255,255,0.94);
+      --text: #0f1115;
+      --text-muted: #5f6673;
+      --line: rgba(15,17,21,0.08);
+      --line-strong: rgba(15,17,21,0.14);
+      --accent: #111111;
+      --success: #0f8a4b;
+      --danger: #d13333;
+      --warning: #8a6111;
+      --shadow-sm: 0 10px 30px rgba(15,17,21,0.06);
+      --shadow-lg: 0 24px 60px rgba(15,17,21,0.14);
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --container: 1320px;
+      --transition: 180ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0c0d10;
+      --bg-soft: #121419;
+      --bg-muted: #17191f;
+      --panel: rgba(18,20,25,0.76);
+      --panel-strong: rgba(18,20,25,0.94);
+      --text: #f5f7fb;
+      --text-muted: #9aa3b2;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.14);
+      --accent: #ffffff;
+      --success: #41c17b;
+      --danger: #ff6b6b;
+      --warning: #f0b84f;
+      --shadow-sm: 0 10px 30px rgba(0,0,0,0.28);
+      --shadow-lg: 0 24px 60px rgba(0,0,0,0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.75), transparent 28%),
+        radial-gradient(circle at top right, rgba(120,120,120,0.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 24%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 22%),
+        var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      color: inherit;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #111 0%, #45484f 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.92);
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      width: 18px;
+      height: 2px;
+      left: 10px;
+      top: 13px;
+      transform: rotate(45deg);
+    }
+
+    .brand-mark::after {
+      width: 18px;
+      height: 2px;
+      left: 10px;
+      top: 24px;
+      transform: rotate(-45deg);
+    }
+
+    .topbar-right,
+    .nav-actions,
+    .utility-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link,
+    .icon-btn,
+    .lang-btn,
+    .btn,
+    .product-action {
+      transition:
+        transform var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        color var(--transition),
+        box-shadow var(--transition),
+        opacity var(--transition);
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+      background: var(--bg-soft);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .lang-switch,
+    .theme-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+    }
+
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      min-width: 44px;
+      min-height: 38px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--bg-soft);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover,
+    .lang-btn:hover,
+    .btn:hover,
+    .product-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .page {
+      padding: 28px 0 70px;
+    }
+
+    .hero {
+      margin-bottom: 20px;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.56) 100%);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    html[data-theme="dark"] .hero {
+      background: linear-gradient(135deg, rgba(20,22,28,0.92) 0%, rgba(17,19,24,0.76) 100%);
+    }
+
+    .hero-inner {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      max-width: 10ch;
+      margin-bottom: 12px;
+    }
+
+    .hero-text,
+    .mini-note {
+      color: var(--text-muted);
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stat-card,
+    .panel,
+    .product-item {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-card {
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+      margin-top: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: 28px;
+      padding: 22px;
+    }
+
+    .panel + .panel {
+      margin-top: 18px;
+    }
+
+    .panel-title {
+      font-size: 1.45rem;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .panel-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .alert {
+      display: none;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font-weight: 600;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert.success {
+      background: rgba(15,138,75,0.08);
+      color: var(--success);
+      border-color: rgba(15,138,75,0.18);
+    }
+
+    .alert.error {
+      background: rgba(209,51,51,0.08);
+      color: var(--danger);
+      border-color: rgba(209,51,51,0.18);
+    }
+
+    .alert.warning {
+      display: block;
+      background: rgba(138,97,17,0.08);
+      color: var(--warning);
+      border-color: rgba(138,97,17,0.18);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--bg-soft);
+      padding: 14px 16px;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      padding-top: 14px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 4px rgba(120,120,120,0.08);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      min-height: 50px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-soft);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: var(--line);
+    }
+
+    .product-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .product-item {
+      border-radius: 24px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 112px 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .product-item img {
+      width: 112px;
+      height: 112px;
+      object-fit: cover;
+      border-radius: 18px;
+      background: var(--bg-muted);
+      border: 1px solid var(--line);
+    }
+
+    .product-item h3 {
+      font-size: 1.05rem;
+      line-height: 1.3;
+      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+    }
+
+    .product-meta {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: end;
+    }
+
+    .product-action {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      color: var(--text);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .product-action.delete {
+      color: var(--danger);
+      border-color: rgba(209,51,51,0.18);
+      background: rgba(209,51,51,0.08);
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line-strong);
+      border-radius: 24px;
+      padding: 34px 18px;
+      text-align: center;
+      color: var(--text-muted);
+      background: var(--panel-strong);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-inner,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        max-width: 12ch;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner,
+      .topbar-right {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav-actions,
+      .utility-actions,
+      .btn-row,
+      .product-actions {
+        width: 100%;
+      }
+
+      .utility-actions {
+        justify-content: space-between;
+      }
+
+      .hero-inner,
+      .panel {
+        padding: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-item {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .product-item img {
+        width: 100%;
+        height: 240px;
+      }
+
+      .product-actions,
+      .btn-row {
+        flex-direction: column;
+      }
+
+      .btn,
+      .product-action {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="index.html" class="brand" aria-label="KVX Reps home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>KVX Reps</span>
+      </a>
+
+      <div class="topbar-right">
+        <nav class="nav-actions" aria-label="Primary navigation">
+          <a class="nav-link" href="index.html" data-i18n="navHome">Start</a>
+          <a class="nav-link" href="favorites.html" data-i18n="navFavorites">Ulubione</a>
+          <a class="nav-link active" href="admin.html" data-i18n="navAdmin">Admin</a>
+        </nav>
+
+        <div class="utility-actions">
+          <div class="lang-switch" aria-label="Language switcher">
+            <button class="lang-btn" data-lang="pl" type="button">PL</button>
+            <button class="lang-btn" data-lang="en" type="button">EN</button>
+          </div>
+
+          <div class="theme-box">
+            <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" type="button">
+              <span id="theme-icon">◐</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-inner">
+          <div>
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span id="hero-badge">Panel administratora</span>
+            </div>
+
+            <h1 class="hero-title" id="hero-title">Zarządzaj produktami w jednym miejscu</h1>
+            <p class="hero-text" id="hero-text">
+              Dodawaj, usuwaj i kontroluj produkty z wspólnej bazy Supabase w estetycznym panelu.
+            </p>
+          </div>
+
+          <div class="hero-side">
+            <div class="stat-card">
+              <span class="mini-note" id="stat-products-label">Produkty</span>
+              <strong id="products-count">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span class="mini-note" id="stat-status-label">Status</span>
+              <strong id="login-status">Offline</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="login-section" class="panel">
+        <h2 class="panel-title" id="login-title">Logowanie admina</h2>
+        <p class="panel-subtitle" id="login-subtitle">Zaloguj się kontem admina z Supabase.</p>
+
+        <div id="login-alert" class="alert"></div>
+
+        <form id="login-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="admin-email" id="email-label">Email</label>
+              <input type="email" id="admin-email" placeholder="admin@email.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="admin-password" id="password-label">Hasło</label>
+              <input type="password" id="admin-password" placeholder="••••••••" required />
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary" id="login-btn">Zaloguj</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="admin-section" class="hidden">
+        <div class="grid">
+          <div>
+            <section class="panel">
+              <h2 class="panel-title" id="add-title">Dodaj nowy produkt</h2>
+              <p class="panel-subtitle" id="add-subtitle">Wszystkie pola poniżej zapisują się do wspólnej bazy produktów.</p>
+
+              <div id="add-alert" class="alert"></div>
+
+              <form id="add-product-form">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="name" id="name-label">Nazwa produktu</label>
+                    <input type="text" id="name" placeholder="np. Chrome Hearts Ring" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="category" id="category-label">Kategoria</label>
+                    <select id="category" required>
+                      <option value="Shoes">Shoes</option>
+                      <option value="Headwear">Headwear</option>
+                      <option value="T-shirts">T-shirts</option>
+                      <option value="Tracksuits">Tracksuits</option>
+                      <option value="Hoodies">Hoodies</option>
+                      <option value="Pants">Pants</option>
+                      <option value="Underwear">Underwear</option>
+                      <option value="Shorts">Shorts</option>
+                      <option value="Accessories">Accessories</option>
+                      <option value="Bags">Bags</option>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Jackets">Jackets</option>
+                      <option value="Polo">Polo</option>
+                      <option value="Belts">Belts</option>
+                      <option value="Sportswear">Sportswear</option>
+                      <option value="Lego">Lego</option>
+                      <option value="Room decorations">Room decorations</option>
+                      <option value="Perfumes">Perfumes</option>
+                      <option value="Sports shoes">Sports shoes</option>
+                      <option value="Watches">Watches</option>
+                      <option value="Shoe accessories">Shoe accessories</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="price" id="price-label">Cena w PLN</label>
+                    <input type="text" id="price" placeholder="np. 249" required />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="link" id="link-label">Link do produktu</label>
+                    <input type="url" id="link" placeholder="https://..." required />
+                  </div>
+
+                  <div class="form-group full">
+                    <label for="image" id="image-label">Główne zdjęcie</label>
+                    <input type="url" id="image" placeholder="https://..." />
+                  </div>
+
+                  <div class="form-group full">
+                    <label for="qc-images" id="qc-label">QC images, oddziel przecinkami</label>
+                    <textarea id="qc-images" placeholder="https://img1.jpg, https://img2.jpg"></textarea>
+                  </div>
+                </div>
+
+                <div class="btn-row">
+                  <button type="submit" class="btn btn-primary" id="add-btn">Dodaj produkt</button>
+                </div>
+              </form>
+            </section>
+          </div>
+
+          <div>
+            <section class="panel">
+              <h2 class="panel-title" id="session-title">Sesja</h2>
+              <p class="panel-subtitle" id="session-subtitle">Po zalogowaniu możesz zarządzać produktami i wylogować konto.</p>
+
+              <div class="btn-row">
+                <button id="logout-btn" class="btn btn-logout" type="button">Wyloguj</button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <h2 class="panel-title" id="danger-title">Danger zone</h2>
+              <p class="panel-subtitle" id="danger-subtitle">
+                Usuwanie działa tylko na konkretnych produktach. Ulubione są prywatne i zapisane lokalnie u użytkowników.
+              </p>
+
+              <div id="danger-warning" class="alert warning">
+                Nie rób tu masowego czyszczenia frontem. Najbezpieczniej usuwać pojedyncze produkty z listy poniżej.
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section class="panel" style="margin-top:18px;">
+          <h2 class="panel-title" id="list-title">Lista produktów</h2>
+          <p class="panel-subtitle" id="list-subtitle">Produkty z bazy Supabase widoczne dla wszystkich użytkowników.</p>
+
+          <div id="products-list" class="product-list">
+            <div class="empty-state">Loading...</div>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data.js"></script>
+  <script>
+    const adminTranslations = {
+      pl: {
+        navHome: "Start",
+        navFavorites: "Ulubione",
+        navAdmin: "Admin",
+        heroBadge: "Panel administratora",
+        heroTitle: "Zarządzaj produktami w jednym miejscu",
+        heroText: "Dodawaj, usuwaj i kontroluj produkty z wspólnej bazy Supabase w estetycznym panelu.",
+        statProductsLabel: "Produkty",
+        statStatusLabel: "Status",
+        statusOnline: "Online",
+        statusOffline: "Offline",
+        loginTitle: "Logowanie admina",
+        loginSubtitle: "Zaloguj się kontem admina z Supabase.",
+        emailLabel: "Email",
+        passwordLabel: "Hasło",
+        loginBtn: "Zaloguj",
+        addTitle: "Dodaj nowy produkt",
+        addSubtitle: "Wszystkie pola poniżej zapisują się do wspólnej bazy produktów.",
+        nameLabel: "Nazwa produktu",
+        categoryLabel: "Kategoria",
+        priceLabel: "Cena w PLN",
+        linkLabel: "Link do produktu",
+        imageLabel: "Główne zdjęcie",
+        qcLabel: "QC images, oddziel przecinkami",
+        addBtn: "Dodaj produkt",
+        addingBtn: "Dodawanie...",
+        sessionTitle: "Sesja",
+        sessionSubtitle: "Po zalogowaniu możesz zarządzać produktami i wylogować konto.",
+        logoutBtn: "Wyloguj",
+        dangerTitle: "Danger zone",
+        dangerSubtitle: "Usuwanie działa tylko na konkretnych produktach. Ulubione są prywatne i zapisane lokalnie u użytkowników.",
+        dangerWarning: "Nie rób tu masowego czyszczenia frontem. Najbezpieczniej usuwać pojedyncze produkty z listy poniżej.",
+        listTitle: "Lista produktów",
+        listSubtitle: "Produkty z bazy Supabase widoczne dla wszystkich użytkowników.",
+        emptyProducts: "Brak produktów w bazie.",
+        openLink: "Otwórz link",
+        delete: "Usuń",
+        deleting: "Usuwanie...",
+        loginSuccess: "Zalogowano pomyślnie.",
+        loginError: "Nie udało się zalogować.",
+        addSuccess: "Produkt został dodany.",
+        addError: "Nie udało się dodać produktu.",
+        deleteSuccess: "Produkt został usunięty.",
+        deleteError: "Nie udało się usunąć produktu.",
+        logoutSuccess: "Wylogowano.",
+        confirmDelete: "Na pewno usunąć ten produkt?",
+        missingFields: "Uzupełnij wszystkie wymagane pola.",
+        notLoggedIn: "Sesja admina wygasła. Zaloguj się ponownie."
+      },
+      en: {
+        navHome: "Home",
+        navFavorites: "Favorites",
+        navAdmin: "Admin",
+        heroBadge: "Admin panel",
+        heroTitle: "Manage products in one place",
+        heroText: "Add, remove and control products from the shared Supabase database in a cleaner panel.",
+        statProductsLabel: "Products",
+        statStatusLabel: "Status",
+        statusOnline: "Online",
+        statusOffline: "Offline",
+        loginTitle: "Admin login",
+        loginSubtitle: "Sign in with your Supabase admin account.",
+        emailLabel: "Email",
+        passwordLabel: "Password",
+        loginBtn: "Sign in",
+        addingBtn: "Adding...",
+        addTitle: "Add new product",
+        addSubtitle: "All fields below are saved to the shared product database.",
+        nameLabel: "Product name",
+        categoryLabel: "Category",
+        priceLabel: "Price in PLN",
+        linkLabel: "Product link",
+        imageLabel: "Main image",
+        qcLabel: "QC images, comma separated",
+        addBtn: "Add product",
+        sessionTitle: "Session",
+        sessionSubtitle: "After login you can manage products and sign out safely.",
+        logoutBtn: "Sign out",
+        dangerTitle: "Danger zone",
+        dangerSubtitle: "Deletion works only per product. Favorites stay private and local in each user's browser.",
+        dangerWarning: "Do not mass-delete from the frontend. It is safest to remove products one by one from the list below.",
+        listTitle: "Products list",
+        listSubtitle: "Supabase products visible to all users.",
+        emptyProducts: "No products in the database.",
+        openLink: "Open link",
+        delete: "Delete",
+        deleting: "Deleting...",
+        loginSuccess: "Signed in successfully.",
+        loginError: "Could not sign in.",
+        addSuccess: "Product added successfully.",
+        addError: "Could not add product.",
+        deleteSuccess: "Product deleted.",
+        deleteError: "Could not delete product.",
+        logoutSuccess: "Signed out.",
+        confirmDelete: "Are you sure you want to delete this product?",
+        missingFields: "Fill in all required fields.",
+        notLoggedIn: "Admin session expired. Sign in again."
+      }
+    };
+
+    function t(key) {
+      const lang = UI.getLang();
+      return adminTranslations[lang]?.[key] || adminTranslations.pl[key] || key;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function priceLabel(price) {
+      const n = Number(String(price).replace(",", "."));
+      if (Number.isNaN(n)) return `${price} PLN`;
+      return `${n.toFixed(0)} PLN`;
+    }
+
+    function setTheme() {
+      document.documentElement.setAttribute("data-theme", UI.getTheme());
+      document.getElementById("theme-icon").textContent = UI.getTheme() === "dark" ? "☼" : "◐";
+    }
+
+    function setText(id, key) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = t(key);
+    }
+
+    function setDataText(selector, key) {
+      const el = document.querySelector(selector);
+      if (el) el.textContent = t(key);
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = UI.getLang();
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === UI.getLang());
+      });
+
+      setDataText('[data-i18n="navHome"]', "navHome");
+      setDataText('[data-i18n="navFavorites"]', "navFavorites");
+      setDataText('[data-i18n="navAdmin"]', "navAdmin");
+
+      setText("hero-badge", "heroBadge");
+      setText("hero-title", "heroTitle");
+      setText("hero-text", "heroText");
+      setText("stat-products-label", "statProductsLabel");
+      setText("stat-status-label", "statStatusLabel");
+
+      setText("login-title", "loginTitle");
+      setText("login-subtitle", "loginSubtitle");
+      setText("email-label", "emailLabel");
+      setText("password-label", "passwordLabel");
+      setText("login-btn", "loginBtn");
+
+      setText("add-title", "addTitle");
+      setText("add-subtitle", "addSubtitle");
+      setText("name-label", "nameLabel");
+      setText("category-label", "categoryLabel");
+      setText("price-label", "priceLabel");
+      setText("link-label", "linkLabel");
+      setText("image-label", "imageLabel");
+      setText("qc-label", "qcLabel");
+      setText("session-title", "sessionTitle");
+      setText("session-subtitle", "sessionSubtitle");
+      setText("logout-btn", "logoutBtn");
+      setText("danger-title", "dangerTitle");
+      setText("danger-subtitle", "dangerSubtitle");
+      setText("danger-warning", "dangerWarning");
+      setText("list-title", "listTitle");
+      setText("list-subtitle", "listSubtitle");
+
+      const addBtn = document.getElementById("add-btn");
+      if (addBtn && !addBtn.disabled) addBtn.textContent = t("addBtn");
+    }
+
+    function showAlert(id, type, message) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = `alert show ${type}`;
+      el.textContent = message;
+    }
+
+    function clearAlert(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = "alert";
+      el.textContent = "";
+    }
+
+    function setLoggedInView(isLoggedIn) {
+      document.getElementById("login-section").classList.toggle("hidden", isLoggedIn);
+      document.getElementById("admin-section").classList.toggle("hidden", !isLoggedIn);
+      document.getElementById("login-status").textContent = isLoggedIn ? t("statusOnline") : t("statusOffline");
+    }
+
+    function normalizeQcImages(text) {
+      return text
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    async function renderProductsList() {
+      const list = document.getElementById("products-list");
+      const products = await DB.getProducts();
+      document.getElementById("products-count").textContent = String(products.length);
+
+      if (!products.length) {
+        list.innerHTML = `<div class="empty-state">${escapeHtml(t("emptyProducts"))}</div>`;
+        return;
+      }
+
+      list.innerHTML = products.map(product => `
+        <article class="product-item">
+          <img
+            src="${escapeHtml(product.image || "https://via.placeholder.com/500x500?text=No+Image")}"
+            alt="${escapeHtml(product.name)}"
+            onerror="this.src='https://via.placeholder.com/500x500?text=Image+Error'"
+          />
+
+          <div>
+            <h3>${escapeHtml(product.name)}</h3>
+            <div class="product-meta">${escapeHtml(product.category)} · ${escapeHtml(priceLabel(product.price))}</div>
+          </div>
+
+          <div class="product-actions">
+            <a class="product-action" href="${escapeHtml(product.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("openLink"))}</a>
+            <button class="product-action delete" data-delete-id="${product.id}" type="button">${escapeHtml(t("delete"))}</button>
+          </div>
+        </article>
+      `).join("");
+
+      list.querySelectorAll("[data-delete-id]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm(t("confirmDelete"))) return;
+
+          const originalText = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = t("deleting");
+
+          const result = await DB.deleteProduct(btn.dataset.deleteId);
+
+          if (result.error) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+            showAlert("add-alert", "error", result.error.message || t("deleteError"));
+            return;
+          }
+
+          showAlert("add-alert", "success", t("deleteSuccess"));
+          await renderProductsList();
+        });
+      });
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearAlert("login-alert");
+
+      const email = document.getElementById("admin-email").value.trim();
+      const password = document.getElementById("admin-password").value;
+      const loginBtn = document.getElementById("login-btn");
+
+      loginBtn.disabled = true;
+
+      const result = await DB.loginAdmin(email, password);
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = t("loginBtn");
+
+      if (result.error) {
+        showAlert("login-alert", "error", result.error.message || t("loginError"));
+        return;
+      }
+
+      showAlert("login-alert", "success", t("loginSuccess"));
+      setLoggedInView(true);
+      await renderProductsList();
+    }
+
+    async function handleAddProduct(e) {
+      e.preventDefault();
+      clearAlert("add-alert");
+
+      const addBtn = document.getElementById("add-btn");
+      const name = document.getElementById("name").value.trim();
+      const category = document.getElementById("category").value;
+      const price = document.getElementById("price").value.trim();
+      const link = document.getElementById("link").value.trim();
+      const image = document.getElementById("image").value.trim();
+      const qcImagesText = document.getElementById("qc-images").value.trim();
+
+      if (!name || !category || !price || !link) {
+        showAlert("add-alert", "error", t("missingFields"));
+        return;
+      }
+
+      const logged = await DB.isAdminLoggedIn();
+      if (!logged) {
+        setLoggedInView(false);
+        showAlert("login-alert", "error", t("notLoggedIn"));
+        return;
+      }
+
+      const qcImages = qcImagesText ? normalizeQcImages(qcImagesText) : [];
+
+      addBtn.disabled = true;
+      addBtn.textContent = t("addingBtn");
+
+      const result = await DB.addProduct({
+        name,
+        category,
+        price,
+        link,
+        image,
+        qcImages
+      });
+
+      addBtn.disabled = false;
+      addBtn.textContent = t("addBtn");
+
+      if (result.error) {
+        showAlert("add-alert", "error", result.error.message || t("addError"));
+        return;
+      }
+
+      showAlert("add-alert", "success", t("addSuccess"));
+      document.getElementById("add-product-form").reset();
+      await renderProductsList();
+    }
+
+    async function handleLogout() {
+      await DB.logoutAdmin();
+      setLoggedInView(false);
+      showAlert("login-alert", "success", t("logoutSuccess"));
+      clearAlert("add-alert");
+    }
+
+    async function init() {
+      setTheme();
+      applyTranslations();
+
+      document.getElementById("theme-toggle").addEventListener("click", () => {
+        UI.toggleTheme();
+        setTheme();
+      });
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          UI.setLang(btn.dataset.lang);
+          applyTranslations();
+
+          if (!document.getElementById("admin-section").classList.contains("hidden")) {
+            await renderProductsList();
+          }
+
+          setLoggedInView(!document.getElementById("admin-section").classList.contains("hidden"));
+        });
+      });
+
+      document.getElementById("login-form").addEventListener("submit", handleLogin);
+      document.getElementById("add-product-form").addEventListener("submit", handleAddProduct);
+      document.getElementById("logout-btn").addEventListener("click", handleLogout);
+
+      const logged = await DB.isAdminLoggedIn();
+      setLoggedInView(logged);
+
+      if (logged) {
+        await renderProductsList();
+      } else {
+        document.getElementById("products-count").textContent = "0";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

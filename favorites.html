@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KVX Reps — Favorites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --bg-soft: #ffffff;
+      --bg-muted: #ebedf0;
+      --panel: rgba(255,255,255,0.72);
+      --panel-strong: rgba(255,255,255,0.9);
+      --text: #0f1115;
+      --text-muted: #5f6673;
+      --line: rgba(15,17,21,0.08);
+      --line-strong: rgba(15,17,21,0.14);
+      --accent: #111111;
+      --shadow-sm: 0 10px 30px rgba(15,17,21,0.06);
+      --shadow-lg: 0 24px 60px rgba(15,17,21,0.14);
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --container: 1380px;
+      --transition: 180ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0c0d10;
+      --bg-soft: #121419;
+      --bg-muted: #17191f;
+      --panel: rgba(18,20,25,0.72);
+      --panel-strong: rgba(18,20,25,0.92);
+      --text: #f5f7fb;
+      --text-muted: #9aa3b2;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.14);
+      --accent: #ffffff;
+      --shadow-sm: 0 10px 30px rgba(0,0,0,0.28);
+      --shadow-lg: 0 24px 60px rgba(0,0,0,0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.75), transparent 28%),
+        radial-gradient(circle at top right, rgba(120,120,120,0.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 24%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 22%),
+        var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #111 0%, #45484f 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.92);
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      width: 18px;
+      height: 2px;
+      left: 10px;
+      top: 13px;
+      transform: rotate(45deg);
+    }
+
+    .brand-mark::after {
+      width: 18px;
+      height: 2px;
+      left: 10px;
+      top: 24px;
+      transform: rotate(-45deg);
+    }
+
+    .topbar-right,
+    .nav-actions,
+    .utility-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link,
+    .icon-btn,
+    .lang-btn,
+    .btn,
+    .card-btn,
+    .favorite-btn {
+      transition:
+        transform var(--transition),
+        background var(--transition),
+        border-color var(--transition),
+        color var(--transition),
+        box-shadow var(--transition),
+        opacity var(--transition);
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+      background: var(--bg-soft);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .lang-switch,
+    .theme-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+    }
+
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      min-width: 44px;
+      min-height: 38px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--bg-soft);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover,
+    .lang-btn:hover,
+    .btn:hover,
+    .card-btn:hover,
+    .favorite-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .page {
+      padding: 28px 0 70px;
+    }
+
+    .hero {
+      margin-bottom: 24px;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.56) 100%);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    html[data-theme="dark"] .hero {
+      background: linear-gradient(135deg, rgba(20,22,28,0.92) 0%, rgba(17,19,24,0.76) 100%);
+    }
+
+    .hero-inner {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 4.4rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      max-width: 10ch;
+      margin-bottom: 12px;
+    }
+
+    .hero-text,
+    .mini-note,
+    .promo-text,
+    .section-subtitle {
+      color: var(--text-muted);
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 14px;
+    }
+
+    .glass-card,
+    .promo-card {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .glass-card strong {
+      display: block;
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+      margin-top: 6px;
+    }
+
+    .promo-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ghost-btn,
+    .btn,
+    .card-btn {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      color: var(--text);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary,
+    .card-btn.primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .content-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin: 26px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel-strong);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      min-height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-media {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: var(--bg-muted);
+      overflow: hidden;
+    }
+
+    .product-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 300ms ease;
+      cursor: pointer;
+    }
+
+    .product-card:hover .product-media img {
+      transform: scale(1.04);
+    }
+
+    .favorite-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.88);
+      color: #111;
+      box-shadow: var(--shadow-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+
+    html[data-theme="dark"] .favorite-btn {
+      background: rgba(15,17,21,0.8);
+      color: #fff;
+    }
+
+    .product-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .product-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .product-category {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--bg-muted);
+      border: 1px solid var(--line);
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .product-title {
+      font-size: 1.08rem;
+      line-height: 1.28;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .product-price {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .product-actions {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line-strong);
+      border-radius: 28px;
+      background: var(--panel-strong);
+      padding: 44px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-state h3 {
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        max-width: 12ch;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner,
+      .topbar-right {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav-actions,
+      .utility-actions {
+        width: 100%;
+      }
+
+      .utility-actions {
+        justify-content: space-between;
+      }
+
+      .hero-inner {
+        padding: 18px;
+      }
+
+      .product-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .ghost-btn,
+      .btn,
+      .card-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container {
+        width: min(var(--container), calc(100% - 20px));
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="index.html" class="brand" aria-label="KVX Reps home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>KVX Reps</span>
+      </a>
+
+      <div class="topbar-right">
+        <nav class="nav-actions" aria-label="Primary navigation">
+          <a class="nav-link" href="index.html" data-i18n="navHome">Start</a>
+          <a class="nav-link active" href="favorites.html" data-i18n="navFavorites">Ulubione</a>
+          <a class="nav-link" href="admin.html" data-i18n="navAdmin">Admin</a>
+        </nav>
+
+        <div class="utility-actions">
+          <div class="lang-switch" aria-label="Language switcher">
+            <button class="lang-btn" data-lang="pl">PL</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+          </div>
+
+          <div class="theme-box">
+            <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+              <span id="theme-icon">◐</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-inner">
+          <div>
+            <div class="badge">
+              <span class="badge-dot"></span>
+              <span id="hero-badge">Twoje zapisane produkty</span>
+            </div>
+
+            <h1 class="hero-title" id="hero-title">Ulubione w jednym miejscu</h1>
+            <p class="hero-text" id="hero-text">
+              Te produkty są zapisane lokalnie w Twojej przeglądarce i widoczne tylko dla Ciebie.
+            </p>
+          </div>
+
+          <div class="hero-side">
+            <div class="glass-card">
+              <span class="mini-note" id="saved-count-label">Zapisane produkty</span>
+              <strong id="saved-count">0</strong>
+            </div>
+
+            <div class="promo-card">
+              <strong>Discord</strong>
+              <p class="promo-text" id="discord-text">Potrzebujesz linków albo pomocy? Wejdź na Discord.</p>
+              <a class="ghost-btn" href="https://discord.gg/Budc8VnFhm" target="_blank" rel="noopener noreferrer">Discord</a>
+            </div>
+
+            <div class="promo-card">
+              <strong>Kakobuy</strong>
+              <p class="promo-text" id="kakobuy-text">Chcesz kupony? Otwórz Kakobuy.</p>
+              <a class="ghost-btn" href="https://ikako.vip/r/kvx20" target="_blank" rel="noopener noreferrer">Kakobuy</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-head">
+        <div>
+          <div class="section-subtitle" id="section-subtitle">Prywatna lista</div>
+          <h2 class="section-title" id="section-title">Twoje ulubione produkty</h2>
+        </div>
+      </div>
+
+      <section class="products-grid" id="favorites-grid">
+        <div class="empty-state">
+          <h3>Loading...</h3>
+          <p>Please wait.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data.js"></script>
+  <script>
+    const favoritesTranslations = {
+      pl: {
+        navHome: "Start",
+        navFavorites: "Ulubione",
+        navAdmin: "Admin",
+        heroBadge: "Twoje zapisane produkty",
+        heroTitle: "Ulubione w jednym miejscu",
+        heroText: "Te produkty są zapisane lokalnie w Twojej przeglądarce i widoczne tylko dla Ciebie.",
+        savedCountLabel: "Zapisane produkty",
+        discordText: "Potrzebujesz linków albo pomocy? Wejdź na Discord.",
+        kakobuyText: "Chcesz kupony? Otwórz Kakobuy.",
+        sectionSubtitle: "Prywatna lista",
+        sectionTitle: "Twoje ulubione produkty",
+        emptyTitle: "Nie masz jeszcze ulubionych",
+        emptyText: "Kliknij serce przy produktach na stronie głównej, aby zapisać je tutaj.",
+        openProduct: "Otwórz produkt",
+        details: "Szczegóły"
+      },
+      en: {
+        navHome: "Home",
+        navFavorites: "Favorites",
+        navAdmin: "Admin",
+        heroBadge: "Your saved products",
+        heroTitle: "Favorites in one place",
+        heroText: "These products are saved locally in your browser and visible only to you.",
+        savedCountLabel: "Saved products",
+        discordText: "Need links or help? Join the Discord.",
+        kakobuyText: "Need coupons? Open Kakobuy.",
+        sectionSubtitle: "Private list",
+        sectionTitle: "Your favorite products",
+        emptyTitle: "You do not have favorites yet",
+        emptyText: "Click the heart icon on products on the homepage to save them here.",
+        openProduct: "Open product",
+        details: "Details"
+      }
+    };
+
+    function t(key) {
+      const lang = UI.getLang();
+      return favoritesTranslations[lang]?.[key] || favoritesTranslations.pl[key] || key;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function priceLabel(price) {
+      const n = Number(String(price).replace(",", "."));
+      if (Number.isNaN(n)) return `${price} PLN`;
+      return `${n.toFixed(0)} PLN`;
+    }
+
+    function setTheme() {
+      document.documentElement.setAttribute("data-theme", UI.getTheme());
+      document.getElementById("theme-icon").textContent = UI.getTheme() === "dark" ? "☼" : "◐";
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = UI.getLang();
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === UI.getLang());
+      });
+
+      document.querySelector('[data-i18n="navHome"]').textContent = t("navHome");
+      document.querySelector('[data-i18n="navFavorites"]').textContent = t("navFavorites");
+      document.querySelector('[data-i18n="navAdmin"]').textContent = t("navAdmin");
+
+      document.getElementById("hero-badge").textContent = t("heroBadge");
+      document.getElementById("hero-title").textContent = t("heroTitle");
+      document.getElementById("hero-text").textContent = t("heroText");
+      document.getElementById("saved-count-label").textContent = t("savedCountLabel");
+      document.getElementById("discord-text").textContent = t("discordText");
+      document.getElementById("kakobuy-text").textContent = t("kakobuyText");
+      document.getElementById("section-subtitle").textContent = t("sectionSubtitle");
+      document.getElementById("section-title").textContent = t("sectionTitle");
+    }
+
+    function renderCard(product) {
+      return `
+        <article class="product-card">
+          <div class="product-media">
+            <button class="favorite-btn" data-remove-id="${product.id}" aria-label="Remove favorite">♥</button>
+
+            <img
+              src="${escapeHtml(product.image || 'https://via.placeholder.com/800x800?text=No+Image')}"
+              alt="${escapeHtml(product.name)}"
+              loading="lazy"
+              onclick="window.location.href='product.html?id=${product.id}'"
+              onerror="this.src='https://via.placeholder.com/800x800?text=Image+Error'"
+            />
+          </div>
+
+          <div class="product-body">
+            <div class="product-topline">
+              <span class="product-category">${escapeHtml(product.category)}</span>
+              <div class="product-price">${escapeHtml(priceLabel(product.price))}</div>
+            </div>
+
+            <h3 class="product-title">${escapeHtml(product.name)}</h3>
+
+            <div class="product-actions">
+              <a class="card-btn primary" href="${escapeHtml(product.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("openProduct"))}</a>
+              <button class="card-btn" onclick="window.location.href='product.html?id=${product.id}'">${escapeHtml(t("details"))}</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    async function renderFavorites() {
+      const grid = document.getElementById("favorites-grid");
+      const favoriteIds = DB.getFavorites().map(String);
+      const products = await DB.getProducts();
+      const favoriteProducts = products.filter(product => favoriteIds.includes(String(product.id)));
+
+      document.getElementById("saved-count").textContent = String(favoriteProducts.length);
+
+      if (!favoriteProducts.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <h3>${escapeHtml(t("emptyTitle"))}</h3>
+            <p>${escapeHtml(t("emptyText"))}</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = favoriteProducts.map(renderCard).join("");
+
+      grid.querySelectorAll("[data-remove-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          DB.removeFavorite(btn.dataset.removeId);
+          renderFavorites();
+        });
+      });
+    }
+
+    function init() {
+      setTheme();
+      applyTranslations();
+
+      document.getElementById("theme-toggle").addEventListener("click", () => {
+        UI.toggleTheme();
+        setTheme();
+      });
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          UI.setLang(btn.dataset.lang);
+          applyTranslations();
+          renderFavorites();
+        });
+      });
+
+      renderFavorites();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

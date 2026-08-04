@@ -1,0 +1,476 @@
+<<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KVX Reps — Product</title>
+  <style>
+    :root {
+      --primary: #0a0a0a;
+      --secondary: #ffffff;
+      --accent: #dc2626;
+      --bg: #fafafa;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --text-light: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+      --shadow-lg: 0 20px 25px -5px rgba(0,0,0,.1);
+    }
+
+    [data-theme="dark"] {
+      --primary: #ffffff;
+      --secondary: #0a0a0a;
+      --accent: #ef4444;
+      --bg: #0f0f10;
+      --card-bg: #17181b;
+      --text: #f3f4f6;
+      --text-light: #9ca3af;
+      --border: #2a2d33;
+      --shadow: 0 4px 10px rgba(0,0,0,.35);
+      --shadow-lg: 0 18px 36px rgba(0,0,0,.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 1.2rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .switch {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--bg);
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+    .switch button {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .switch button.active {
+      background: var(--primary);
+      color: var(--secondary);
+    }
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn-back {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--secondary);
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 26px 0 22px;
+    }
+    .product-detail {
+      background: var(--card-bg);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 40px;
+    }
+    .main-image {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #f3f4f6;
+    }
+    .product-info h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .product-price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .product-meta {
+      background: var(--bg);
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .product-meta p {
+      margin-bottom: 8px;
+      color: var(--text-light);
+    }
+    .product-meta strong {
+      color: var(--text);
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 15px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      margin-bottom: 12px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .favorite-btn {
+      margin-bottom: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .favorite-btn.active {
+      color: var(--accent);
+    }
+    .qc-section {
+      padding: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .qc-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .qc-section p {
+      color: var(--text-light);
+      margin-bottom: 22px;
+    }
+    .qc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .qc-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.94);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.active {
+      display: flex;
+    }
+    .lightbox-image {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .lightbox-close,
+    .lightbox-nav {
+      position: absolute;
+      color: #fff;
+      font-size: 3rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .lightbox-close { top: 20px; right: 30px; }
+    .lightbox-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+    .lightbox-next { right: 20px; top: 50%; transform: translateY(-50%); }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+      .main-image {
+        height: 340px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">KVX REPS</a>
+
+      <div class="topbar-right">
+        <div class="switch" aria-label="Language switcher">
+          <button class="lang-btn" data-lang="pl">PL</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <button id="theme-toggle" class="icon-btn">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <a href="index.html" class="btn-back" id="back-link">← Back to Products</a>
+
+    <div class="product-detail" id="product-container"></div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <span class="lightbox-close" id="lightbox-close">&times;</span>
+    <span class="lightbox-nav lightbox-prev" id="lightbox-prev">&#10094;</span>
+    <span class="lightbox-nav lightbox-next" id="lightbox-next">&#10095;</span>
+    <img class="lightbox-image" id="lightbox-image" src="" alt="QC Photo">
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data.js"></script>
+  <script>
+    const texts = {
+      pl: {
+        back: "← Wróć do produktów",
+        buy: "Kup teraz",
+        continue: "Kontynuuj zakupy",
+        category: "Kategoria",
+        available: "Dostępność",
+        stock: "Dostępny",
+        qcTitle: "QC Photos",
+        qcText: "Kliknij zdjęcie, aby powiększyć.",
+        notFound: "Produktu nie znaleziono."
+      },
+      en: {
+        back: "← Back to Products",
+        buy: "Buy Now",
+        continue: "Continue Shopping",
+        category: "Category",
+        available: "Availability",
+        stock: "In Stock",
+        qcTitle: "QC Photos",
+        qcText: "Click an image to enlarge.",
+        notFound: "Product not found."
+      }
+    };
+
+    function t(key) {
+      const lang = UI.getLang();
+      return texts[lang]?.[key] || texts.pl[key] || key;
+    }
+
+    function getTheme() {
+      return UI.getTheme();
+    }
+
+    function setTheme(theme) {
+      UI.setTheme(theme);
+      document.getElementById('theme-toggle').textContent = theme === 'dark' ? '☀' : '◐';
+    }
+
+    function renderSwitches() {
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === UI.getLang());
+      });
+
+      document.getElementById('back-link').textContent = t('back');
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    let product = null;
+
+    const container = document.getElementById('product-container');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-image');
+    let currentQcIndex = 0;
+    let qcImages = [];
+
+    function toggleFavorite(id, btn) {
+      const active = DB.toggleFavorite(id);
+      btn.classList.toggle('active', active);
+      btn.innerHTML = active ? '♥' : '♡';
+    }
+
+    function openLightbox(index) {
+      currentQcIndex = index;
+      lightboxImg.src = qcImages[currentQcIndex];
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+    }
+
+    function showPrev() {
+      currentQcIndex = (currentQcIndex - 1 + qcImages.length) % qcImages.length;
+      lightboxImg.src = qcImages[currentQcIndex];
+    }
+
+    function showNext() {
+      currentQcIndex = (currentQcIndex + 1) % qcImages.length;
+      lightboxImg.src = qcImages[currentQcIndex];
+    }
+
+    function renderProduct() {
+      if (!product) {
+        container.innerHTML = `<div style="padding:40px;text-align:center;">${t('notFound')}</div>`;
+        return;
+      }
+
+      qcImages = product.qcImages || [];
+      const favActive = DB.isFavorite(product.id);
+      const favClass = favActive ? 'active' : '';
+      const favIcon = favActive ? '♥' : '♡';
+
+      container.innerHTML = `
+        <div class="product-grid">
+          <img
+            src="${product.image || 'https://via.placeholder.com/600x600?text=No+Image'}"
+            alt="${product.name}"
+            class="main-image"
+            onerror="this.src='https://via.placeholder.com/600x600?text=Image+Error'"
+          />
+
+          <div class="product-info">
+            <button class="favorite-btn ${favClass}" onclick="toggleFavorite('${product.id}', this)">${favIcon}</button>
+            <h1>${product.name}</h1>
+            <p class="product-price">${product.price} PLN</p>
+
+            <div class="product-meta">
+              <p><strong>${t('category')}:</strong> ${product.category}</p>
+              <p><strong>${t('available')}:</strong> ${t('stock')}</p>
+            </div>
+
+            <a href="${product.link}" target="_blank" class="btn btn-primary">${t('buy')}</a>
+            <a href="index.html" class="btn btn-secondary">${t('continue')}</a>
+          </div>
+        </div>
+
+        ${
+          qcImages.length > 0
+            ? `
+            <div class="qc-section">
+              <h2>${t('qcTitle')}</h2>
+              <p>${t('qcText')}</p>
+              <div class="qc-grid">
+                ${qcImages.map((qc, index) => `
+                  <img
+                    src="${qc}"
+                    alt="QC Photo ${index + 1}"
+                    class="qc-image"
+                    onclick="openLightbox(${index})"
+                    onerror="this.style.display='none'"
+                  />
+                `).join('')}
+              </div>
+            </div>
+          `
+            : ''
+        }
+      `;
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        UI.setLang(btn.dataset.lang);
+        renderSwitches();
+        renderProduct();
+      });
+    });
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev').addEventListener('click', showPrev);
+    document.getElementById('lightbox-next').addEventListener('click', showNext);
+    lightbox.addEventListener('click', e => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPrev();
+      if (e.key === 'ArrowRight') showNext();
+    });
+
+    async function init() {
+      setTheme(getTheme());
+      renderSwitches();
+      product = await DB.getProductById(productId);
+      renderProduct();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    window.toggleFavorite = toggleFavorite;
+    window.openLightbox = openLightbox;
+  </script>
+</body>
+</html>
